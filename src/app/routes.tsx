@@ -11,10 +11,9 @@ export const router = createBrowserRouter([
     Component: Root,
     children: [
       { index: true, Component: Home },
-      { path: 'discover', Component: Home },
-      { path: 'browse', Component: Home },
       { path: 'playlists', Component: Playlists },
       { path: 'settings', Component: Settings },
+      { path: '*', Component: Home },
     ],
   },
 ]);

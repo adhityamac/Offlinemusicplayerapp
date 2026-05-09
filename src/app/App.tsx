@@ -1218,19 +1218,20 @@ function AppLayout() {
       >
         {currentTrack?.cover ? (
            <>
-             <div className="absolute inset-0 bg-black/40" />
-             <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full mix-blend-screen mesh-blob-1" style={{ backgroundColor: dominantColor, opacity: 0.4 * beatPulse, filter: 'blur(120px)' }} />
-             <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full mix-blend-screen mesh-blob-2" style={{ backgroundColor: dominantColor, opacity: 0.3 * beatPulse, filter: 'blur(150px)' }} />
-             <div className="absolute top-[20%] left-[30%] w-[50%] h-[50%] bg-white rounded-full mix-blend-overlay mesh-blob-1" style={{ opacity: 0.15, filter: 'blur(100px)', animationDelay: '-5s' }} />
+             <div className="absolute inset-0 liquid-bg" style={{ background: `linear-gradient(135deg, rgba(10,10,15,0.9), ${dominantColor}60, rgba(10,10,15,0.9))` }} />
+             <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] mix-blend-screen mesh-blob-1" style={{ backgroundColor: dominantColor, opacity: 0.4 * beatPulse, filter: 'blur(120px)' }} />
+             <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] mix-blend-screen mesh-blob-2" style={{ backgroundColor: dominantColor, opacity: 0.3 * beatPulse, filter: 'blur(150px)' }} />
+             <div className="absolute top-[20%] left-[30%] w-[60%] h-[60%] mix-blend-overlay mesh-blob-3" style={{ backgroundColor: dominantColor, opacity: 0.15, filter: 'blur(100px)' }} />
              <img src={currentTrack.cover} className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-10 blur-[80px]" />
              <div className="absolute inset-0 mix-blend-overlay opacity-30" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
            </>
         ) : (
-           <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a24] to-black">
-             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/40 rounded-full blur-[120px] mesh-blob-1" />
-             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/40 rounded-full blur-[120px] mesh-blob-2" />
-             <div className="absolute top-[40%] left-[40%] w-[30%] h-[30%] bg-primary/30 rounded-full blur-[100px] mesh-blob-1" style={{ animationDelay: '-5s' }} />
-           </div>
+             <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f] via-[#1a1a24] to-[#0a0a0f] liquid-bg">
+               <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] mix-blend-screen mesh-blob-1 bg-primary/20 blur-[120px]" />
+               <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] mix-blend-screen mesh-blob-2 bg-purple-600/10 blur-[150px]" />
+               <div className="absolute top-[20%] left-[30%] w-[60%] h-[60%] bg-white/5 mix-blend-overlay mesh-blob-3 blur-[100px]" />
+               <div className="absolute inset-0 mix-blend-overlay opacity-[0.15]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
+             </div>
         )}
       </motion.div>
 

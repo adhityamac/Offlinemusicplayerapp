@@ -213,17 +213,62 @@
     background-clip: padding-box;
   }
 
-  @keyframes meshMovement {
-    0% { transform: scale(1) translate(0, 0); }
-    33% { transform: scale(1.1) translate(5%, 5%); }
-    66% { transform: scale(0.9) translate(-5%, 5%); }
-    100% { transform: scale(1) translate(0, 0); }
+  @keyframes liquidMorph {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+    34% {
+      transform: translate(8%, 12%) scale(1.1) rotate(120deg);
+      border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+    }
+    67% {
+      transform: translate(-10%, 8%) scale(0.9) rotate(240deg);
+      border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(360deg);
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+  }
+
+  @keyframes liquidBackground {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .liquid-bg {
+    background-size: 400% 400%;
+    animation: liquidBackground 15s ease infinite;
+  }
+
+  @keyframes liquidMorph {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+    34% {
+      transform: translate(8%, 12%) scale(1.1) rotate(120deg);
+      border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+    }
+    67% {
+      transform: translate(-10%, 8%) scale(0.9) rotate(240deg);
+      border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(360deg);
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
   }
 
   .mesh-blob-1 {
-    animation: meshMovement 15s infinite ease-in-out alternate;
+    animation: liquidMorph 25s infinite linear;
   }
   .mesh-blob-2 {
-    animation: meshMovement 20s infinite ease-in-out alternate-reverse;
+    animation: liquidMorph 30s infinite linear reverse;
+  }
+  .mesh-blob-3 {
+    animation: liquidMorph 20s infinite linear 10s;
   }
 }

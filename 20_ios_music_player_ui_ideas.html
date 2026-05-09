@@ -1,0 +1,434 @@
+<h2 class="sr-only">20 premium iOS-style UI design ideas for an offline music player app</h2>
+
+<style>
+.ideas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; padding: 0.5rem 0 1rem; }
+.idea-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.idea-card:hover { border-color: var(--color-border-secondary); background: var(--color-background-secondary); }
+.idea-card.active { border-color: var(--color-border-primary); }
+.preview { height: 72px; border-radius: var(--border-radius-md); background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-size: 22px; color: var(--color-text-secondary); position: relative; overflow: hidden; }
+.num { font-size: 10px; font-weight: 500; color: var(--color-text-tertiary); margin-bottom: 4px; }
+.idea-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; line-height: 1.3; }
+.idea-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+.tag { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 99px; margin-top: 6px; }
+.tag-ui { background: var(--color-background-info); color: var(--color-text-info); }
+.tag-fx { background: var(--color-background-success); color: var(--color-text-success); }
+.tag-ux { background: var(--color-background-warning); color: var(--color-text-warning); }
+
+.bar { display: inline-block; width: 3px; border-radius: 2px; background: var(--color-text-secondary); margin: 0 1px; animation: bounce 0.8s ease-in-out infinite alternate; }
+.bar:nth-child(2){animation-delay:0.1s;} .bar:nth-child(3){animation-delay:0.2s;} .bar:nth-child(4){animation-delay:0.3s;} .bar:nth-child(5){animation-delay:0.4s;} .bar:nth-child(6){animation-delay:0.15s;} .bar:nth-child(7){animation-delay:0.25s;}
+@keyframes bounce { from{height:6px} to{height:28px} }
+
+.vinyl { width: 44px; height: 44px; border-radius: 50%; background: var(--color-background-secondary); border: 6px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: center; animation: spin 4s linear infinite; }
+.vinyl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-text-tertiary); }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+.wave-bar { display: inline-block; width: 3px; border-radius: 2px; margin: 0 1px; }
+
+.pill { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: 99px; padding: 5px 14px; font-size: 11px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 6px; }
+
+.ring { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: center; }
+
+.lyric-line { font-size: 10px; color: var(--color-text-tertiary); text-align: center; padding: 2px 0; }
+.lyric-line.active-l { color: var(--color-text-primary); font-weight: 500; font-size: 11px; }
+</style>
+
+<div class="ideas-grid">
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="width:44px;height:44px;border-radius:8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);position:relative;">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:14px;background:var(--color-border-tertiary);border-radius:0 0 6px 6px;display:flex;align-items:center;padding:0 4px;gap:2px;">
+          <div class="bar" style="height:6px;"></div><div class="bar" style="height:10px;animation-delay:0.1s;"></div><div class="bar" style="height:8px;animation-delay:0.2s;"></div><div class="bar" style="height:12px;animation-delay:0.3s;"></div><div class="bar" style="height:6px;animation-delay:0.05s;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="num">01</div>
+    <div class="idea-title">Color-Adaptive UI</div>
+    <div class="idea-desc">Pull dominant color from album art, recolor the entire player theme dynamically.</div>
+    <span class="tag tag-fx">visual fx</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div class="vinyl"><div class="vinyl-dot"></div></div>
+    </div>
+    <div class="num">02</div>
+    <div class="idea-title">Spinning Vinyl Record</div>
+    <div class="idea-desc">Replace static album art with an animated vinyl that rotates during playback.</div>
+    <span class="tag tag-ui">ui</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview" style="flex-direction:column;gap:4px;padding:8px;">
+      <div class="lyric-line">take my hand</div>
+      <div class="lyric-line active-l">we'll make it i swear</div>
+      <div class="lyric-line">whoooa, livin' on a prayer</div>
+    </div>
+    <div class="num">03</div>
+    <div class="idea-title">Synced Lyrics View</div>
+    <div class="idea-desc">Karaoke-style lyrics that scroll and highlight line-by-line as the song plays.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="width:140px;height:16px;border-radius:4px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;overflow:hidden;position:relative;">
+        <div style="display:flex;align-items:flex-end;height:100%;gap:1px;padding:0 2px;">
+          <div class="wave-bar" style="height:8px;background:var(--color-text-tertiary);"></div>
+          <div class="wave-bar" style="height:14px;background:var(--color-text-tertiary);"></div>
+          <div class="wave-bar" style="height:10px;background:var(--color-text-tertiary);"></div>
+          <div class="wave-bar" style="height:16px;background:var(--color-text-tertiary);"></div>
+          <div class="wave-bar" style="height:7px;background:var(--color-text-tertiary);"></div>
+          <div class="wave-bar" style="height:12px;background:var(--color-text-tertiary);"></div>
+          <div class="wave-bar" style="height:9px;background:var(--color-text-tertiary);"></div>
+          <div class="wave-bar" style="height:6px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:11px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:13px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:8px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:16px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:10px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:7px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:12px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:9px;background:var(--color-text-secondary);"></div>
+          <div class="wave-bar" style="height:14px;background:var(--color-text-secondary);"></div>
+        </div>
+        <div style="position:absolute;left:40%;top:0;bottom:0;width:1.5px;background:var(--color-text-primary);"></div>
+      </div>
+    </div>
+    <div class="num">04</div>
+    <div class="idea-title">Waveform Seek Bar</div>
+    <div class="idea-desc">Replace the thin line scrubber with the actual audio waveform — scrub through it.</div>
+    <span class="tag tag-ui">ui</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div class="pill">
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+        <div>
+          <div style="font-size:10px;font-weight:500;color:var(--color-text-primary);">Blinding Lights</div>
+          <div style="font-size:9px;color:var(--color-text-tertiary);">The Weeknd</div>
+        </div>
+        <i class="ti ti-player-pause" style="font-size:14px;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="num">05</div>
+    <div class="idea-title">Dynamic Island Player</div>
+    <div class="idea-desc">Pill-shaped floating mini player at the top — expands on tap like iOS dynamic island.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview" style="flex-direction:column;gap:3px;">
+      <div style="display:flex;align-items:flex-end;gap:2px;height:36px;">
+        <div class="bar" style="height:10px;width:4px;"></div>
+        <div class="bar" style="height:20px;width:4px;animation-delay:0.1s;"></div>
+        <div class="bar" style="height:28px;width:4px;animation-delay:0.2s;"></div>
+        <div class="bar" style="height:16px;width:4px;animation-delay:0.3s;"></div>
+        <div class="bar" style="height:22px;width:4px;animation-delay:0.15s;"></div>
+        <div class="bar" style="height:30px;width:4px;animation-delay:0.25s;"></div>
+        <div class="bar" style="height:14px;width:4px;animation-delay:0.05s;"></div>
+        <div class="bar" style="height:18px;width:4px;animation-delay:0.35s;"></div>
+        <div class="bar" style="height:26px;width:4px;animation-delay:0.4s;"></div>
+        <div class="bar" style="height:12px;width:4px;animation-delay:0.1s;"></div>
+      </div>
+      <div style="font-size:9px;color:var(--color-text-tertiary);">Bass · Mid · Treble</div>
+    </div>
+    <div class="num">06</div>
+    <div class="idea-title">Live Audio Visualizer</div>
+    <div class="idea-desc">Real-time bar visualizer behind or below the player using Web Audio API analyser.</div>
+    <span class="tag tag-fx">visual fx</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;gap:4px;width:130px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:20px;height:20px;border-radius:4px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);flex-shrink:0;"></div>
+          <div style="flex:1;height:3px;border-radius:2px;background:var(--color-border-tertiary);"><div style="width:70%;height:100%;background:var(--color-text-secondary);border-radius:2px;"></div></div>
+          <div style="font-size:9px;color:var(--color-text-tertiary);">EQ</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <div style="font-size:9px;color:var(--color-text-tertiary);width:20px;">60Hz</div>
+          <div style="flex:1;height:3px;border-radius:2px;background:var(--color-border-tertiary);"><div style="width:80%;height:100%;background:var(--color-text-secondary);border-radius:2px;"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <div style="font-size:9px;color:var(--color-text-tertiary);width:20px;">1kHz</div>
+          <div style="flex:1;height:3px;border-radius:2px;background:var(--color-border-tertiary);"><div style="width:55%;height:100%;background:var(--color-text-secondary);border-radius:2px;"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <div style="font-size:9px;color:var(--color-text-tertiary);width:20px;">16kHz</div>
+          <div style="flex:1;height:3px;border-radius:2px;background:var(--color-border-tertiary);"><div style="width:65%;height:100%;background:var(--color-text-secondary);border-radius:2px;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="num">07</div>
+    <div class="idea-title">5-Band Equalizer</div>
+    <div class="idea-desc">EQ panel with sliders for Bass, Low-Mid, Mid, High-Mid, Treble presets.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:center;">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <i class="ti ti-chevron-left" style="font-size:14px;color:var(--color-text-tertiary);" aria-hidden="true"></i>
+          <div style="width:40px;height:40px;border-radius:8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);"></div>
+          <i class="ti ti-chevron-right" style="font-size:14px;color:var(--color-text-tertiary);" aria-hidden="true"></i>
+        </div>
+        <div style="font-size:9px;color:var(--color-text-tertiary);">← swipe to skip →</div>
+      </div>
+    </div>
+    <div class="num">08</div>
+    <div class="idea-title">Swipe Gesture Controls</div>
+    <div class="idea-desc">Swipe left/right to skip tracks, swipe down to dismiss, swipe up to queue.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;gap:4px;align-items:flex-end;">
+        <div style="width:38px;height:50px;border-radius:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);opacity:0.5;"></div>
+        <div style="width:44px;height:60px;border-radius:8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-primary);"></div>
+        <div style="width:38px;height:50px;border-radius:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);opacity:0.5;"></div>
+      </div>
+    </div>
+    <div class="num">09</div>
+    <div class="idea-title">3D Album Carousel</div>
+    <div class="idea-desc">Cover Flow-style album browser with perspective depth and side-card scaling.</div>
+    <span class="tag tag-ui">ui</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;gap:3px;width:130px;">
+        <div style="font-size:9px;color:var(--color-text-tertiary);margin-bottom:2px;">Up next</div>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);">
+          <div style="width:16px;height:16px;border-radius:3px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div style="font-size:9px;font-weight:500;color:var(--color-text-primary);">Starboy</div>
+          </div>
+          <i class="ti ti-grip-vertical" style="font-size:12px;color:var(--color-text-tertiary);" aria-hidden="true"></i>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:6px;">
+          <div style="width:16px;height:16px;border-radius:3px;background:var(--color-border-tertiary);flex-shrink:0;"></div>
+          <div style="flex:1;"><div style="font-size:9px;color:var(--color-text-secondary);">Save Your Tears</div></div>
+          <i class="ti ti-grip-vertical" style="font-size:12px;color:var(--color-text-tertiary);" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+    <div class="num">10</div>
+    <div class="idea-title">Drag-to-Reorder Queue</div>
+    <div class="idea-desc">Pull-up queue panel with drag handles to reorder upcoming songs on the fly.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="position:relative;width:56px;height:56px;">
+        <div class="ring" style="width:56px;height:56px;position:absolute;top:0;left:0;"></div>
+        <div class="ring" style="width:40px;height:40px;position:absolute;top:8px;left:8px;animation:spin 6s linear infinite reverse;"></div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:var(--color-text-secondary);"></div>
+      </div>
+    </div>
+    <div class="num">11</div>
+    <div class="idea-title">Concentric Ring Visualizer</div>
+    <div class="idea-desc">Rings that expand and pulse outward from the center in sync with bass hits.</div>
+    <span class="tag tag-fx">visual fx</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;gap:3px;width:130px;">
+        <div style="display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:6px;background:var(--color-background-secondary);">
+          <i class="ti ti-moon" style="font-size:12px;color:var(--color-text-secondary);" aria-hidden="true"></i>
+          <div style="font-size:9px;color:var(--color-text-primary);">Sleep timer</div>
+          <div style="margin-left:auto;font-size:9px;font-weight:500;color:var(--color-text-secondary);">15 min</div>
+        </div>
+        <div style="height:4px;border-radius:2px;background:var(--color-border-tertiary);"><div style="width:40%;height:100%;background:var(--color-text-secondary);border-radius:2px;"></div></div>
+        <div style="font-size:9px;color:var(--color-text-tertiary);text-align:right;">fades at end</div>
+      </div>
+    </div>
+    <div class="num">12</div>
+    <div class="idea-title">Sleep Timer with Fade</div>
+    <div class="idea-desc">Countdown ring timer that auto-pauses or slowly fades out music after set time.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;gap:4px;width:130px;">
+        <div style="display:flex;gap:4px;">
+          <span style="font-size:9px;padding:2px 7px;border-radius:99px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);">😴 chill</span>
+          <span style="font-size:9px;padding:2px 7px;border-radius:99px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-primary);color:var(--color-text-primary);">🔥 hype</span>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <span style="font-size:9px;padding:2px 7px;border-radius:99px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);">💧 sad</span>
+          <span style="font-size:9px;padding:2px 7px;border-radius:99px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);">🌅 focus</span>
+        </div>
+      </div>
+    </div>
+    <div class="num">13</div>
+    <div class="idea-title">Mood Tag Playlists</div>
+    <div class="idea-desc">Tag playlists by mood (chill, hype, focus, sad) and filter by vibe with one tap.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);"></div>
+        <div>
+          <div style="font-size:9px;font-weight:500;color:var(--color-text-primary);">Midnight Rain</div>
+          <div style="font-size:9px;color:var(--color-text-tertiary);">Taylor Swift</div>
+          <div style="display:flex;align-items:center;gap:3px;margin-top:2px;">
+            <div style="height:2px;width:50px;border-radius:1px;background:var(--color-border-tertiary);"><div style="width:40%;height:100%;background:var(--color-text-secondary);border-radius:1px;"></div></div>
+            <div style="font-size:8px;color:var(--color-text-tertiary);">1:34</div>
+          </div>
+        </div>
+        <i class="ti ti-player-pause" style="font-size:16px;color:var(--color-text-primary);margin-left:auto;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="num">14</div>
+    <div class="idea-title">Persistent Mini Player</div>
+    <div class="idea-desc">Sticky bottom bar that stays while browsing library — tap to expand to full player.</div>
+    <span class="tag tag-ui">ui</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+        <div style="font-size:9px;color:var(--color-text-tertiary);">volume</div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <i class="ti ti-volume-3" style="font-size:12px;color:var(--color-text-tertiary);" aria-hidden="true"></i>
+          <div style="width:80px;height:20px;border-radius:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;padding:0 6px;">
+            <div style="width:55%;height:4px;border-radius:2px;background:var(--color-text-secondary);position:relative;">
+              <div style="position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:var(--color-text-primary);border:1.5px solid var(--color-background-primary);"></div>
+            </div>
+          </div>
+          <i class="ti ti-volume" style="font-size:12px;color:var(--color-text-secondary);" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+    <div class="num">15</div>
+    <div class="idea-title">iOS-style Volume Knob</div>
+    <div class="idea-desc">Pill-shaped volume slider with rounded thumb — feels native to iOS design language.</div>
+    <span class="tag tag-ui">ui</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;gap:3px;width:130px;">
+        <div style="font-size:9px;color:var(--color-text-tertiary);">Recently played</div>
+        <div style="display:flex;gap:4px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="width:30px;height:30px;border-radius:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);"></div>
+            <div style="font-size:8px;color:var(--color-text-tertiary);">Pop</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="width:30px;height:30px;border-radius:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);"></div>
+            <div style="font-size:8px;color:var(--color-text-tertiary);">Rap</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="width:30px;height:30px;border-radius:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);"></div>
+            <div style="font-size:8px;color:var(--color-text-tertiary);">Lo-fi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="num">16</div>
+    <div class="idea-title">Smart Genre Shelf</div>
+    <div class="idea-desc">Auto-grouped horizontal shelves by genre, pulled from file ID3 tags.</div>
+    <span class="tag tag-ui">ui</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <i class="ti ti-arrow-shuffle" style="font-size:16px;color:var(--color-text-secondary);" aria-hidden="true"></i>
+          <div style="font-size:8px;color:var(--color-text-tertiary);text-align:center;">off</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <i class="ti ti-repeat" style="font-size:16px;color:var(--color-text-primary);" aria-hidden="true"></i>
+          <div style="font-size:8px;color:var(--color-text-tertiary);text-align:center;">1</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px;align-items:center;">
+          <div style="font-size:13px;font-weight:500;color:var(--color-text-secondary);">1.5×</div>
+          <div style="font-size:8px;color:var(--color-text-tertiary);">speed</div>
+        </div>
+      </div>
+    </div>
+    <div class="num">17</div>
+    <div class="idea-title">Playback Speed Control</div>
+    <div class="idea-desc">Speed selector (0.5× – 2×) with pitch correction toggle for podcasts/audiobooks.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="display:flex;gap:3px;align-items:flex-end;">
+          <div style="font-size:9px;color:var(--color-text-tertiary);">Listening streaks</div>
+        </div>
+        <div style="display:flex;gap:2px;align-items:flex-end;">
+          <div style="width:8px;border-radius:2px 2px 0 0;background:var(--color-border-tertiary);" style="height:16px;"></div>
+          <div style="width:8px;height:22px;border-radius:2px 2px 0 0;background:var(--color-border-tertiary);"></div>
+          <div style="width:8px;height:14px;border-radius:2px 2px 0 0;background:var(--color-border-tertiary);"></div>
+          <div style="width:8px;height:30px;border-radius:2px 2px 0 0;background:var(--color-text-secondary);"></div>
+          <div style="width:8px;height:20px;border-radius:2px 2px 0 0;background:var(--color-border-tertiary);"></div>
+          <div style="width:8px;height:26px;border-radius:2px 2px 0 0;background:var(--color-border-tertiary);"></div>
+          <div style="width:8px;height:18px;border-radius:2px 2px 0 0;background:var(--color-border-tertiary);"></div>
+        </div>
+        <div style="font-size:8px;color:var(--color-text-tertiary);">M  T  W  T  F  S  S</div>
+      </div>
+    </div>
+    <div class="num">18</div>
+    <div class="idea-title">Listening Stats Screen</div>
+    <div class="idea-desc">Weekly listening bars, top artists, total hours — a Spotify Wrapped-style recap.</div>
+    <span class="tag tag-ui">ui</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;gap:3px;align-items:center;">
+        <div style="display:flex;gap:4px;align-items:center;">
+          <i class="ti ti-heart" style="font-size:18px;color:var(--color-text-secondary);" aria-hidden="true"></i>
+          <div style="font-size:9px;color:var(--color-text-tertiary);">double tap to like</div>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <span style="font-size:9px;padding:2px 8px;border-radius:99px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);">+ to playlist</span>
+          <span style="font-size:9px;padding:2px 8px;border-radius:99px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);">share</span>
+        </div>
+      </div>
+    </div>
+    <div class="num">19</div>
+    <div class="idea-title">Double-Tap to Like</div>
+    <div class="idea-desc">Double-tap album art triggers a heart animation and saves to favourites — iOS-native feel.</div>
+    <span class="tag tag-ux">ux</span>
+  </div>
+
+  <div class="idea-card">
+    <div class="preview">
+      <div style="display:flex;flex-direction:column;gap:3px;width:130px;padding:4px 6px;border-radius:8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);">
+        <div style="font-size:8px;color:var(--color-text-tertiary);">now playing • 9:41 AM</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:24px;height:24px;border-radius:5px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div style="font-size:9px;font-weight:500;color:var(--color-text-primary);">Blinding Lights</div>
+            <div style="height:2px;border-radius:1px;background:var(--color-border-tertiary);margin-top:3px;"><div style="width:60%;height:100%;background:var(--color-text-secondary);border-radius:1px;"></div></div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <i class="ti ti-player-skip-back" style="font-size:11px;color:var(--color-text-secondary);" aria-hidden="true"></i>
+            <i class="ti ti-player-skip-forward" style="font-size:11px;color:var(--color-text-secondary);" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="num">20</div>
+    <div class="idea-title">Lock Screen Widget</div>
+    <div class="idea-desc">A dedicated lock screen / notification widget layout with controls, progress, and art.</div>
+    <span class="tag tag-ui">ui</span>
+  </div>
+
+</div>

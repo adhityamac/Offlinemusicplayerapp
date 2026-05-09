@@ -19,13 +19,31 @@ export type Track = {
   file?: File;
   genre?: string;
   mood?: string;
+  lyrics?: string;
+  filePath?: string;
+};
+export type RepeatMode = 'none' | 'one' | 'all';
+export type Playlist = {
+  id: string;
+  name: string;
+  trackIds: string[];
 };
 
-export type RepeatMode = 'none' | 'one' | 'all';
+declare global {
+  interface Window {
+    electronAPI?: {
+      selectFolder: () => Promise<any[] | null>;
+      getLibrary: () => Promise<any[]>;
+      setMiniPlayer: (isMini: boolean) => void;
+      parseFiles: (filePaths: string[]) => Promise<any[]>;
+      updateMetadata: (filePath: string, tags: any) => Promise<any>;
+    };
+  }
+}
 
 interface PlayerContextType {
   tracks: Track[];
-  loadFiles: (files: FileList | File[]) => Promise<void>;
+  loadFiles: () => Promise<void>;
   clearLibrary: () => void;
   isLoading: boolean;
   loadingProgress: number;
@@ -41,6 +59,7 @@ interface PlayerContextType {
 
   queue: Track[];
   queueIndex: number;
+  setQueue: React.Dispatch<React.SetStateAction<Track[]>>;
 
   playTrack: (track: Track, list?: Track[]) => void;
   togglePlayPause: () => void;
@@ -67,8 +86,16 @@ interface PlayerContextType {
 
   analyserNode: AnalyserNode | null;
   accentColor: string;
+  favorites: string[];
+  toggleFavorite: (id: string) => void;
+  addFiles: (filePaths: string[]) => Promise<void>;
+  updateTrackMetadata: (filePath: string, tags: any) => Promise<void>;
+  
+  playlists: Playlist[];
+  createPlaylist: (name: string) => void;
+  addTrackToPlaylist: (playlistId: string, trackId: string) => void;
+  removeTrackFromPlaylist: (playlistId: string, trackId: string) => void;
 }
-
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 // Singleton audio element
@@ -116,7 +143,7 @@ async function parseFileMetadata(file: File): Promise<{
     if (meta.common.genre && meta.common.genre.length > 0) genre = meta.common.genre[0];
     const pic = meta.common.picture?.[0];
     if (pic) {
-      const blob = new Blob([pic.data], { type: pic.format || 'image/jpeg' });
+      const blob = new Blob([new Uint8Array(pic.data)], { type: pic.format || 'image/jpeg' });
       cover = URL.createObjectURL(blob);
     }
   } catch {
@@ -150,6 +177,23 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [playbackRate, setPlaybackRateState] = useState(1);
   const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
   const [accentColor, setAccentColor] = useState('#8B5CF6');
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('sonance_favorites');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [playlists, setPlaylists] = useState<Playlist[]>(() => {
+    try {
+      const stored = localStorage.getItem('sonance_playlists');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  });
 
   // Mutable refs to avoid stale closures in audio event handlers
   const queueRef = useRef<Track[]>([]);
@@ -161,17 +205,67 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const spatialPannerRef = useRef<StereoPannerNode | null>(null);
   const lofiFilterRef = useRef<BiquadFilterNode | null>(null);
   const audioGraphInitRef = useRef(false);
+  const eqEnabledRef = useRef(false);
+  const eqBandsRef = useRef([0, 0, 0, 0, 0]);
+  const scratchIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sync refs with state
   useEffect(() => { queueRef.current = queue; }, [queue]);
   useEffect(() => { queueIndexRef.current = queueIndex; }, [queueIndex]);
   useEffect(() => { repeatModeRef.current = repeatMode; }, [repeatMode]);
   useEffect(() => { currentTrackRef.current = currentTrack; }, [currentTrack]);
+  useEffect(() => { eqEnabledRef.current = eqEnabled; }, [eqEnabled]);
+  useEffect(() => { eqBandsRef.current = eqBands; }, [eqBands]);
 
   // Apply initial volume
   useEffect(() => {
     audio.volume = volume / 100;
   }, []);
+
+  // Save favorites to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem('sonance_favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  useEffect(() => {
+    localStorage.setItem('sonance_playlists', JSON.stringify(playlists));
+  }, [playlists]);
+
+  // Load persistent library from Electron on startup
+  useEffect(() => {
+    if (window.electronAPI) {
+      window.electronAPI.getLibrary().then(lib => {
+        if (lib && lib.length > 0) {
+          setTracks(lib.map(t => ({
+            id: t.id,
+            title: t.title,
+            artist: t.artist,
+            album: t.album,
+            cover: t.coverArt || '',
+            duration: t.duration,
+            src: t.fileUrl,
+            lyrics: t.lyrics,
+          })));
+        }
+      });
+    }
+  }, []);
+
+  // Set up Media Session API for SMTC / Native Media Keys
+  useEffect(() => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', () => audio.play().catch(console.error));
+      navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        if (audio.currentTime > 3) audio.currentTime = 0;
+        else if (queueIndexRef.current > 0) playAtIndex(queueIndexRef.current - 1);
+      });
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        if (queueIndexRef.current < queueRef.current.length - 1) playAtIndex(queueIndexRef.current + 1);
+        else if (repeatModeRef.current === 'all') playAtIndex(0);
+      });
+    }
+  }, [audio]);
 
   // Initialize Web Audio API graph (called once on first user interaction)
   const initAudioGraph = useCallback(() => {
@@ -241,6 +335,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
     if (audioContextRef.current?.state === 'suspended') {
       audioContextRef.current.resume();
+    }
+
+    // Update Native Media Controls Metadata
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.title,
+        artist: track.artist,
+        album: track.album,
+        artwork: track.cover ? [{ src: track.cover, sizes: '512x512', type: 'image/jpeg' }] : []
+      });
     }
 
     audio.play().catch(console.error);
@@ -315,54 +419,78 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('keydown', handleKey);
   }, [audio, playAtIndex]);
 
-  // Load audio files
-  const loadFiles = useCallback(async (files: FileList | File[]) => {
-    const fileArray = Array.from(files).filter(f => AUDIO_EXTENSIONS.test(f.name));
-    if (fileArray.length === 0) return;
-
-    setIsLoading(true);
-    setLoadingProgress(0);
-
-    for (let i = 0; i < fileArray.length; i++) {
-      const file = fileArray[i];
-      const src = URL.createObjectURL(file);
-      const meta = await parseFileMetadata(file);
-
-      // Get duration via a temp audio element
-      let dur = 0;
-      try {
-        await new Promise<void>((resolve) => {
-          const tmp = new Audio(src);
-          tmp.addEventListener('loadedmetadata', () => { dur = tmp.duration; tmp.src = ''; resolve(); }, { once: true });
-          tmp.addEventListener('error', () => resolve(), { once: true });
-          setTimeout(resolve, 3000); // timeout fallback
-        });
-      } catch {}
-
-      const newTrack: Track = {
-        id: `${file.name}-${file.size}-${i}`,
-        title: meta.title,
-        artist: meta.artist,
-        album: meta.album,
-        cover: meta.cover,
-        genre: meta.genre,
-        mood: ['chill', 'hype', 'focus', 'sad'][Math.floor(Math.random() * 4)], // mock mood
-        duration: dur,
-        src,
-        file,
-      };
-
-      // Add track incrementally so UI updates in real-time
-      setTracks(prev => {
-        const existingIds = new Set(prev.map(t => t.id));
-        if (existingIds.has(newTrack.id)) return prev;
-        return [...prev, newTrack];
-      });
-
-      setLoadingProgress(Math.round(((i + 1) / fileArray.length) * 100));
+  const loadFiles = useCallback(async () => {
+    if (window.electronAPI) {
+      setIsLoading(true);
+      const lib = await window.electronAPI.selectFolder();
+      if (lib && lib.length > 0) {
+        setTracks(lib.map(t => ({
+          id: t.id,
+          title: t.title,
+          artist: t.artist,
+          album: t.album,
+          cover: t.coverArt || '',
+          duration: t.duration,
+          src: t.fileUrl,
+          lyrics: t.lyrics,
+          filePath: t.filePath,
+        })));
+      }
+      setIsLoading(false);
+    } else {
+      console.warn('Native folder selection requires Electron environment.');
     }
+  }, []);
 
-    setIsLoading(false);
+  const addFiles = useCallback(async (filePaths: string[]) => {
+    if (window.electronAPI?.parseFiles) {
+      setIsLoading(true);
+      const newTracksRaw = await window.electronAPI.parseFiles(filePaths);
+      if (newTracksRaw && newTracksRaw.length > 0) {
+        const newTracks = newTracksRaw.map(t => ({
+          id: t.id,
+          title: t.title,
+          artist: t.artist,
+          album: t.album,
+          cover: t.coverArt || '',
+          duration: t.duration,
+          src: t.fileUrl,
+          lyrics: t.lyrics,
+          filePath: t.filePath,
+        }));
+        setTracks(prev => [...newTracks, ...prev.filter(pt => !newTracks.find(nt => nt.id === pt.id))]);
+      }
+      setIsLoading(false);
+    }
+  }, []);
+
+  const updateTrackMetadata = useCallback(async (filePath: string, tags: any) => {
+    if (window.electronAPI?.updateMetadata) {
+      const result = await window.electronAPI.updateMetadata(filePath, tags);
+      if (result.success && result.track) {
+        setTracks(prev => prev.map(t => {
+          if (t.filePath === filePath) {
+            return {
+              ...t,
+              title: result.track.title,
+              artist: result.track.artist,
+              album: result.track.album,
+              cover: result.track.coverArt || '',
+            };
+          }
+          return t;
+        }));
+        if (currentTrackRef.current?.filePath === filePath) {
+          setCurrentTrack(prev => prev ? {
+            ...prev,
+            title: result.track.title,
+            artist: result.track.artist,
+            album: result.track.album,
+            cover: result.track.coverArt || '',
+          } : null);
+        }
+      }
+    }
   }, []);
 
   const clearLibrary = useCallback(() => {
@@ -400,13 +528,30 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const togglePlayPause = useCallback(() => {
     if (!currentTrack) return;
+    if (scratchIntervalRef.current) {
+      clearInterval(scratchIntervalRef.current);
+      scratchIntervalRef.current = null;
+    }
+    
     if (audio.paused) {
       if (audioContextRef.current?.state === 'suspended') audioContextRef.current.resume();
+      audio.playbackRate = playbackRate;
       audio.play().catch(console.error);
     } else {
-      audio.pause();
+      let currentRate = playbackRate;
+      const step = currentRate / 15;
+      scratchIntervalRef.current = setInterval(() => {
+        currentRate -= step;
+        if (currentRate <= 0.1) {
+          if (scratchIntervalRef.current) clearInterval(scratchIntervalRef.current);
+          audio.pause();
+          audio.playbackRate = playbackRate;
+        } else {
+          audio.playbackRate = currentRate;
+        }
+      }, 30);
     }
-  }, [audio, currentTrack]);
+  }, [audio, currentTrack, playbackRate]);
 
   const seek = useCallback((time: number) => {
     audio.currentTime = time;
@@ -444,8 +589,31 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, [audio, playAtIndex]);
 
   const toggleShuffle = useCallback(() => {
-    setIsShuffled(prev => !prev);
-  }, []);
+    setIsShuffled(prev => {
+      const next = !prev;
+      if (next && queueRef.current.length > 0 && currentTrackRef.current) {
+        // shuffle the remaining queue starting from current track
+        const current = currentTrackRef.current;
+        const others = tracks.filter(t => t.id !== current.id);
+        const shuffled = [...others].sort(() => Math.random() - 0.5);
+        const newQueue = [current, ...shuffled];
+        queueRef.current = newQueue;
+        setQueue(newQueue);
+        queueIndexRef.current = 0;
+        setQueueIndex(0);
+      } else if (!next && currentTrackRef.current) {
+        // restore original queue
+        const current = currentTrackRef.current;
+        queueRef.current = tracks;
+        setQueue(tracks);
+        const newIdx = tracks.findIndex(t => t.id === current.id);
+        const resolvedIdx = newIdx >= 0 ? newIdx : 0;
+        queueIndexRef.current = resolvedIdx;
+        setQueueIndex(resolvedIdx);
+      }
+      return next;
+    });
+  }, [tracks]);
 
   const cycleRepeat = useCallback(() => {
     setRepeatMode(prev => {
@@ -460,11 +628,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setEqBands(prev => {
       const next = [...prev];
       next[index] = gain;
+      eqBandsRef.current = next;
       return next;
     });
     const filter = eqFiltersRef.current[index];
-    if (filter) filter.gain.value = eqEnabled ? gain : 0;
-  }, [eqEnabled]);
+    if (filter) filter.gain.value = eqEnabledRef.current ? gain : 0;
+  }, []);
 
   const setPlaybackRate = useCallback((rate: number) => {
     audio.playbackRate = rate;
@@ -474,12 +643,13 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const toggleEq = useCallback(() => {
     setEqEnabled(prev => {
       const next = !prev;
+      eqEnabledRef.current = next;
       eqFiltersRef.current.forEach((filter, i) => {
-        filter.gain.value = next ? eqBands[i] : 0;
+        filter.gain.value = next ? eqBandsRef.current[i] : 0;
       });
       return next;
     });
-  }, [eqBands]);
+  }, []);
 
   const toggleSpatialAudio = useCallback(() => {
     setIsSpatialAudio(prev => {
@@ -506,6 +676,32 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const toggleFavorite = useCallback((id: string) => {
+    setFavorites(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+  }, []);
+
+  const createPlaylist = useCallback((name: string) => {
+    setPlaylists(prev => [...prev, { id: 'PL_' + Date.now().toString(), name, trackIds: [] }]);
+  }, []);
+
+  const addTrackToPlaylist = useCallback((playlistId: string, trackId: string) => {
+    setPlaylists(prev => prev.map(p => {
+      if (p.id === playlistId && !p.trackIds.includes(trackId)) {
+        return { ...p, trackIds: [...p.trackIds, trackId] };
+      }
+      return p;
+    }));
+  }, []);
+
+  const removeTrackFromPlaylist = useCallback((playlistId: string, trackId: string) => {
+    setPlaylists(prev => prev.map(p => {
+      if (p.id === playlistId) {
+        return { ...p, trackIds: p.trackIds.filter(id => id !== trackId) };
+      }
+      return p;
+    }));
+  }, []);
+
   return (
     <PlayerContext.Provider
       value={{
@@ -524,6 +720,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         repeatMode,
         queue,
         queueIndex,
+        setQueue,
         playTrack,
         togglePlayPause,
         seek,
@@ -545,6 +742,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         setPlaybackRate,
         analyserNode,
         accentColor,
+        favorites,
+        toggleFavorite,
+        addFiles,
+        updateTrackMetadata,
+        playlists,
+        createPlaylist,
+        addTrackToPlaylist,
+        removeTrackFromPlaylist,
       }}
     >
       {children}

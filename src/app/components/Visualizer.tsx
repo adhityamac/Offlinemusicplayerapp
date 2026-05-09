@@ -14,19 +14,25 @@ export function Visualizer({ width = 80, height = 24, barCount = 14, className =
   const animRef = useRef<number>();
   const { analyserNode, isPlaying, accentColor } = usePlayer();
 
+  // One-time canvas DPR setup — only depends on width/height
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Retina support
     const dpr = window.devicePixelRatio || 1;
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
-    ctx.scale(dpr, dpr);
+    const ctx = canvas.getContext('2d');
+    if (ctx) ctx.scale(dpr, dpr);
+  }, [width, height]);
+
+  // Draw loop — re-runs when audio state or color changes
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
     if (!analyserNode || !isPlaying) {
       ctx.clearRect(0, 0, width, height);
@@ -60,7 +66,6 @@ export function Visualizer({ width = 80, height = 24, barCount = 14, className =
       if (mode === 'bars') {
         const bw = (width / barCount) - 1.5;
         for (let i = 0; i < barCount; i++) {
-          // Map bar index to frequency bin (focus on lower frequencies)
           const binIndex = Math.floor((i / barCount) * (bufferLength * 0.6));
           const value = dataArray[binIndex] / 255;
           const bh = Math.max(2, value * height);
@@ -80,7 +85,6 @@ export function Visualizer({ width = 80, height = 24, barCount = 14, className =
           ctx.fill();
         }
       } else {
-        // Wave mode
         const waveData = new Uint8Array(bufferLength);
         analyserNode.getByteTimeDomainData(waveData);
         ctx.lineWidth = 1.5;
@@ -102,6 +106,7 @@ export function Visualizer({ width = 80, height = 24, barCount = 14, className =
     draw();
     return () => { animRef.current && cancelAnimationFrame(animRef.current); };
   }, [analyserNode, isPlaying, width, height, barCount, accentColor, mode]);
+
 
   return (
     <canvas

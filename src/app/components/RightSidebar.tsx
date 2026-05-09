@@ -11,6 +11,8 @@ function formatTime(sec: number): string {
 
 export function RightSidebar() {
   const { queue, queueIndex, currentTrack, isPlaying, playTrack, accentColor } = usePlayer();
+  // Play a track by its actual position in the current queue without reshuffling
+  const playQueueItem = (track: typeof queue[0]) => playTrack(track, queue);
   const [activeTab, setActiveTab] = useState<'queue' | 'recent'>('queue');
 
   // Show queue context: a few tracks before and after current
@@ -97,7 +99,7 @@ export function RightSidebar() {
                   return (
                     <button
                       key={track.id + idx}
-                      onClick={() => playTrack(track)}
+                      onClick={() => playQueueItem(track)}
                       className={`flex items-center gap-3 w-full p-2 rounded-xl text-left transition-all group ${
                         isActive
                           ? 'bg-[#291B4C]/80'

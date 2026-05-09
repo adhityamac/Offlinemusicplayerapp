@@ -102,9 +102,13 @@
   
   .glass-card:hover {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
-    transform: translateY(-4px);
     box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.4);
     border-top: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  /* Use this on card-grid items that should visually lift on hover */
+  .glass-card-lift:hover {
+    transform: translateY(-4px);
   }
 
   .btn-glass {
@@ -187,5 +191,39 @@
   .ios-slider:hover::-webkit-slider-runnable-track {
     height: 6px;
     background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Mac-style custom scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  @keyframes meshMovement {
+    0% { transform: scale(1) translate(0, 0); }
+    33% { transform: scale(1.1) translate(5%, 5%); }
+    66% { transform: scale(0.9) translate(-5%, 5%); }
+    100% { transform: scale(1) translate(0, 0); }
+  }
+
+  .mesh-blob-1 {
+    animation: meshMovement 15s infinite ease-in-out alternate;
+  }
+  .mesh-blob-2 {
+    animation: meshMovement 20s infinite ease-in-out alternate-reverse;
   }
 }
